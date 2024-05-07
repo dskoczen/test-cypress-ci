@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
 import { getFakeLoginResponse } from "../../generators/userGenerator"
+import { getUsersMocks } from "../../mocks/getUsers"
 
 describe('Home tests in isolation', () => {
     beforeEach(() => {
@@ -8,7 +9,7 @@ describe('Home tests in isolation', () => {
         const user = getFakeLoginResponse()
         cy.setCookie('token', user.token)
         localStorage.setItem('user', JSON.stringify(user))
-        cy.intercept('GET', '**/users', { fixture: 'users.json'})
+        getUsersMocks.mockUsers()
     })
 
     it('should display login page if we use fake credentials', () => {
