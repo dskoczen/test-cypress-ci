@@ -22,7 +22,7 @@ jobs:
           chmod +x run-docker-compose-ci.sh
           ./run-docker-compose-ci.sh
       - run: npm install
-      - uses: browser-actions/setup-chrome@v1
+      - uses: browser-actions/setup-chrome@v1 
       - name: Run Cypress tests
         run: npx cypress run --browser chrome
       - name: Generate Allure report
@@ -73,7 +73,7 @@ jobs:
       - name: Run Cypress tests
         run: npx cypress run --browser firefox
 
-  edge-tests:
+  edge-tests-part-1:
     runs-on: ubuntu-latest
 
     steps:
@@ -95,5 +95,55 @@ jobs:
       - run: npm install
       - uses: browser-actions/setup-edge@v1
       - name: Run Cypress tests
-        run: npx cypress run --browser edge
+        run: npx cypress run --browser edge --spec "cypress/e2e/*.cy.ts"
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots/
+
+      - name: Upload Cypress videos
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-videos
+          path: cypress/videos/
+
+  edge-tests-part-2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Checkout external repository
+        uses: actions/checkout@v4
+        with:
+          repository: "slawekradzyminski/awesome-localstack"
+          path: "awesome-localstack"
+      - name: Run Docker Compose
+        run: |
+          cd awesome-localstack
+          chmod +x run-docker-compose-ci.sh
+          ./run-docker-compose-ci.sh
+      - run: npm install
+      - uses: browser-actions/setup-edge@v1
+      - name: Run Cypress tests
+        run: npx cypress run --browser edge --spec "cypress/e2e/isolation/*"
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots/
+
+      - name: Upload Cypress videos
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-videos
+          path: cypress/videos/
 

@@ -21,6 +21,7 @@ describe('register tests in isolation', () => {
 
         // then
         alerts.verifySuccess('Registration successful')
-        cy.url().should('contain', '/login')
+        cy.url().should('contain', '/loginn')
+        
     })
 })
