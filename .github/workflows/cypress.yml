@@ -5,7 +5,6 @@ on: push
 jobs:
   chrome-tests:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js 18
@@ -26,6 +25,30 @@ jobs:
       - uses: browser-actions/setup-chrome@v1
       - name: Run Cypress tests
         run: npx cypress run --browser chrome
+      - name: Generate Allure report
+        run: npx allure generate --single-file
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: 'gh-pages'
+          path: 'gh-pages'
+      - name: Clear old reports
+        run: |
+          cd gh-pages
+          git rm -rf .
+          git clean -fxd
+      - name: Copy report to gh-pages
+        run: |
+          cp -r allure-report/* gh-pages/
+      - name: Commit and push
+        run: |
+          cd gh-pages
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Update Test Report"
+          git push origin gh-pages
+
   firefox-tests:
     runs-on: ubuntu-latest
 
@@ -49,6 +72,7 @@ jobs:
       - uses: browser-actions/setup-firefox@v1
       - name: Run Cypress tests
         run: npx cypress run --browser firefox
+
   edge-tests:
     runs-on: ubuntu-latest
 
