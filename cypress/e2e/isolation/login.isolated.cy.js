@@ -26,7 +26,6 @@ describe('login tests in isolation', () => {
     })
 
     it('should not successfully login', () => {
-        const fakeLoginResponse = getFakeLoginResponse()
         const user = getRandomUser()
         const message ='bad'
         cy.intercept('POST', '**/users/signin', (req) => {
