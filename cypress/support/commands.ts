@@ -1,5 +1,3 @@
-import { getRandomUser, getrandomString } from "../generators/userGenerator"
-
 Cypress.Commands.add('login', (username, password) => {
     //zadanie: chcemy sie pozbyc logowania przez ui
     //cy.get('[name=username]').type('admin')

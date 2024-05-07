@@ -1,7 +1,11 @@
+import { User } from "../types/user";
+
 // cypress/support/index.ts
-declare namespace Cypress {
-    interface Chainable {
-        login(username: string, password: string): void;
-        register(user: object): void;
+declare global {
+    namespace Cypress {
+        interface Chainable {
+            login(username: string, password: string): void;
+            register(user: User): void;
+        }
     }
 }
